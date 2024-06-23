@@ -1,0 +1,1 @@
+This is a sample text file used for testing the file locking and reading program. Ensure this file has more than 100 characters to test the program correctly.
