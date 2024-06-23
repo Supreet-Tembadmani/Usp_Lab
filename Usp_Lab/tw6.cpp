@@ -2,34 +2,29 @@
 //Write a C/C++ program to illustrate the race condition.
 
 
-#include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
-#include <sys/wait.h>
 
-void charatatime(const char *str) {
-    const char *ptr;
-    int c;
-    std::cout.setf(std::ios::unitbuf);  // Set the output to be unbuffered
-    for (ptr = str; (c = *ptr++) != 0;) {
-        putc(c, stdout);
-    }
-}
+static void charactertime(const char *); // Change to const char*
 
 int main() {
-    pid_t pid;
-    for (int i = 0; i < 3; ++i) {
-        if ((pid = fork()) < 0) {
-            std::cerr << "fork error." << std::endl;
-        } else if (pid == 0) {
-            charatatime("output from child\n");
-            _exit(0);
-        } else {
-            charatatime("output from parent\n");
-        }
+    int pid;
+    if ((pid = fork()) < 0) {
+        printf("fork error\n");
+    } else if (pid == 0) {
+        charactertime("Output of the Child\n");
+    } else {
+        charactertime("Output of the Parent\n");
     }
+    _exit(0);
+}
 
-    // Wait for all child processes to finish
-    while (wait(nullptr) > 0);
-
-    return 0;
+static void charactertime(const char *str) { // Change to const char*
+    const char *ptr; // Change to const char*
+    int c;
+    setbuf(stdout, NULL); // Disable buffering for stdout
+    for (ptr = str; (c = *ptr++) != 0; ) {
+        putc(c, stdout); // Output each character one at a time
+    }
 }
